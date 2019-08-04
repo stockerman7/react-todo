@@ -11,14 +11,39 @@ export default class ToDo extends Component {
   };
 
   render() {
-    const { isCompleted } = this.state;
+    const { isEditing, isCompleted } = this.state;
     return (
       <View style={styles.container}>
-        {/* 터치 했을시 투명도 */}
-        <TouchableOpacity onPress={this._toggleComplete}>
-          <View style={[styles.circle, isCompleted ? styles.completedCircle : styles.uncompletedCircle]} />
-        </TouchableOpacity>
-        <Text style={styles.text}>I'm a Todo</Text>
+        <View style={styles.column}>
+          {/* 터치 했을시 투명도 */}
+          <TouchableOpacity onPress={this._toggleComplete}>
+            <View style={[styles.circle, isCompleted ? styles.completedCircle : styles.uncompletedCircle]} />
+          </TouchableOpacity>
+          <Text style={[styles.text, isCompleted ? styles.completedText : styles.uncompletedText]}>I'm a Todo</Text>
+        </View>
+
+        { isEditing ? (
+          <View style={styles.actions}>
+            <TouchableOpacity onPressOut={this._finishEditing}>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText}>✓</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.actions}>
+            <TouchableOpacity onPressOut={this._startEditing}>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText}>✎</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.actionContainer}>
+                <Text style={styles.actionText}>X</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) }
       </View>
     );
   }
@@ -30,6 +55,18 @@ export default class ToDo extends Component {
       }
     })
   };
+
+  _startEditing = () => {
+    this.setState({
+      isEditing: true
+    })
+  };
+
+  _finishEditing = () => {
+    this.setState({
+      isEditing: false
+    })
+  };
 }
 
 const styles = StyleSheet.create({
@@ -38,25 +75,46 @@ const styles = StyleSheet.create({
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   circle: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    borderWidth: 1,
-    marginRight: 10
+    borderWidth: 1
   },
   completedCircle: {
-    borderColor: "#f23657",
-    borderWidth: 8
+    borderColor: "#bbb"
   },
   uncompletedCircle: {
-    borderColor: "#bbb"
+    borderColor: "#f23657"
   },
   text: {
     fontWeight: "600",
     fontSize: 20,
     marginVertical: 20
+  },
+  completedText: {
+    color: "#bbb",
+    textDecorationLine: "line-through"
+  },
+  uncompletedText: {
+    color: "#353535"
+  },
+  column: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: width / 2,
+    justifyContent: "space-between"
+  },
+  actions: {
+    flexDirection: "row"
+  },
+  actionContainer: {
+    margin: 10
+  },
+  actionText: {
+    fontSize: 20
   }
 });
